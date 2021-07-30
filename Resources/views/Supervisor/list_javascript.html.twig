@@ -2,11 +2,26 @@
 
 <script type="text/javascript">
     document.addEventListener("DOMContentLoaded", function(event) {
+        let activeTab = localStorage.getItem('activeTab');
+        if (activeTab) {
+            $('.nav-tabs a[href="' + activeTab + '"]').tab('show');
+        }
+
+        let activeGroupTab = localStorage.getItem('activeGroupTab');
+
+        if (activeGroupTab !== undefined) {
+            let groupSelected = $('.group-select option[value=' + activeGroupTab + ']');
+            groupSelected.attr('selected', 'selected');
+            dropdownSelect(groupSelected, $(groupSelected).parent())
+            renderSelected(groupSelected, $(groupSelected).parent())
+        }
+
         // update processes states on tab change
         $('#supervisor-instances').find('> li > a').click(function (e) {
             e.preventDefault();
             $(this).tab('show');
             updateAll();
+            localStorage.setItem('activeTab', $(e.target).attr('href'));
         });
 
         // use ajax to start/stop process. wait 1,2 sec then refresh row
@@ -134,6 +149,8 @@
             } else {
                 $('#startStop').removeClass('btn-primary')
             }
+
+            localStorage.setItem('activeGroupTab', '' + active);
         })
 
         $('.confirm-group > a').click(function(e) {
